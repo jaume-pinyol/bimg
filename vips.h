@@ -47,6 +47,11 @@ typedef struct {
 	double Background[3];
 } WatermarkOptions;
 
+typedef struct {
+	VipsImage  *image;
+} WatermarkImage;
+
+
 static int
 has_profile_embed(VipsImage *image) {
 	return vips_image_get_typeof(image, VIPS_META_ICC_NAME);
@@ -332,6 +337,26 @@ vips_watermark(VipsImage *in, VipsImage **out, WatermarkTextOptions *to, Waterma
 	g_object_unref(base);
 	return 0;
 }
+
+
+
+int
+vips_watermark_image(VipsImage *in,  WatermarkImage *watermark) {
+	double ones[3] = { 1, 1, 1 };
+
+	VipsImage *base = vips_image_new();
+	VipsImage **t = (VipsImage **) vips_object_local_array(VIPS_OBJECT(base), 10);
+	t[0] = in;
+
+	if (watermark->image != NULL) {
+	    vips_draw_image(in, watermark->image, 10, 10, NULL);
+	}
+
+	g_object_unref(base);
+	return 0;
+}
+
+
 
 int
 vips_gaussblur_bridge(VipsImage *in, VipsImage **out, double sigma, double min_ampl) {

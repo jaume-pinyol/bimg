@@ -107,7 +107,13 @@ func Resize(buf []byte, o Options) ([]byte, error) {
 	}
 
 	// Add watermark, if necessary
-	image, err = watermakImage(image, o.Watermark)
+	image, err = watermarkImage(image, o.Watermark)
+	if err != nil {
+		return nil, err
+	}
+
+	// Add watermark, if necessary
+	image, err = watermarkImageWithImage(image, o.WatermarkImage)
 	if err != nil {
 		return nil, err
 	}
@@ -293,7 +299,7 @@ func rotateAndFlipImage(image *C.VipsImage, o Options) (*C.VipsImage, bool, erro
 	return image, rotated, err
 }
 
-func watermakImage(image *C.VipsImage, w Watermark) (*C.VipsImage, error) {
+func watermarkImage(image *C.VipsImage, w Watermark) (*C.VipsImage, error) {
 	if w.Text == "" {
 		return image, nil
 	}
@@ -318,6 +324,19 @@ func watermakImage(image *C.VipsImage, w Watermark) (*C.VipsImage, error) {
 	}
 
 	image, err := vipsWatermark(image, w)
+	if err != nil {
+		return nil, err
+	}
+
+	return image, nil
+}
+
+func watermarkImageWithImage(image *C.VipsImage, w WatermarkImage) (*C.VipsImage, error) {
+	if w.Watermark == nil {
+		return image, nil
+	}
+
+	image, err := vipsWatermarkImage(image, w)
 	if err != nil {
 		return nil, err
 	}

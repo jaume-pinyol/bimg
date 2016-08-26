@@ -220,6 +220,16 @@ func vipsWatermark(image *C.VipsImage, w Watermark) (*C.VipsImage, error) {
 	return out, nil
 }
 
+
+func vipsWatermarkImage(image *C.VipsImage, w WatermarkImage) (*C.VipsImage, error) {
+	err := C.vips_watermark_image(image, (*C.WatermarkImage)(unsafe.Pointer(&w)))
+	if err != 0 {
+		return nil, catchVipsError()
+	}
+
+	return image, nil
+}
+
 func vipsRead(buf []byte) (*C.VipsImage, ImageType, error) {
 	var image *C.VipsImage
 	imageType := vipsImageType(buf)

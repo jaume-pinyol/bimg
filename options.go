@@ -5,6 +5,7 @@ package bimg
 #include "vips/vips.h"
 */
 import "C"
+import "gopkg.in/h2non/bimg.v1"
 
 const (
 	// Quality defines the default JPEG quality to be used.
@@ -39,12 +40,15 @@ const (
 	Bilinear
 	// Nohalo interpolation value.
 	Nohalo
+	//Area interpolation value
+	Area
 )
 
 var interpolations = map[Interpolator]string{
 	Bicubic:  "bicubic",
 	Bilinear: "bilinear",
 	Nohalo:   "nohalo",
+	Area: 	  "area",
 }
 
 func (i Interpolator) String() string {
@@ -127,6 +131,10 @@ type Watermark struct {
 	Background  Color
 }
 
+type WatermarkImage struct {
+	Watermark *bimg.Image
+}
+
 // GaussianBlur represents the gaussian image transformation values.
 type GaussianBlur struct {
 	Sigma   float64
@@ -168,6 +176,7 @@ type Options struct {
 	Background     Color
 	Gravity        Gravity
 	Watermark      Watermark
+	WatermarkImage WatermarkImage
 	Type           ImageType
 	Interpolator   Interpolator
 	Interpretation Interpretation
